@@ -1,0 +1,216 @@
+#include <graphics.h>
+#include <windows.h>
+#include <stdio.h>
+#include <conio.h>
+#define xrad 10
+#define yrad 20
+#define dis 200
+#define maxcen 150
+#define speedm 3
+
+int main()
+{
+start:
+
+    int win1 =initwindow(600,400,"JUMPY-JUMPY",100,100,true);
+
+    setcurrentwindow(win1);
+
+    setcolor(RED);
+    settextstyle(BOLD_FONT,HORIZ_DIR,5);
+    outtextxy(100,30,"START ");
+    delay(100);
+    cleardevice();
+
+    int maxx= getmaxx(),maxy=getmaxy();
+    int tmaxx1,tmaxx2,tmaxx3,monx=50,mony=270,i=0,t=0,page=0,a,b,c,x,y,ceny;
+    int score=0;
+    char arr[50];
+    tmaxx1=tmaxx2=tmaxx3=maxx;
+
+    while(1)
+    {
+        setactivepage(page);
+        setvisualpage(1-page);
+        cleardevice();
+
+       setfillstyle(SOLID_FILL,GREEN);   //road
+       bar(0,290,maxx,350);
+       setfillstyle(CLOSE_DOT_FILL,BROWN);
+       bar(0,350,maxx,maxy);
+
+       //clouds
+       setcolor(CYAN);
+       setfillstyle(SOLID_FILL,CYAN);
+       fillellipse(100,100,40,20);
+       fillellipse(160,100,40,20);
+       fillellipse(150,90,40,30);
+
+       fillellipse(400,110,40,20);
+       fillellipse(460,110,40,20);
+       fillellipse(450,100,40,30);
+
+
+
+
+
+       //monkey
+
+       setcolor(DARKGRAY);
+       setfillstyle(CLOSE_DOT_FILL,DARKGRAY);
+       if(mony!=270)
+       {
+           if((mony-t)!=maxcen)
+           {
+               ceny=mony-t;
+               fillellipse(monx,ceny,xrad,yrad);
+               t+=5;
+           }
+
+           else if((mony-t+i)>=maxcen && (maxcen+i) <=270)
+           {
+               ceny=maxcen+i;
+               fillellipse(monx,ceny,xrad,yrad);
+
+               if(maxcen+i==270)
+                {
+                     i=t=0;
+                     mony=270;
+                }
+               i+=5;
+           }
+       }
+
+       else
+       {
+           ceny=mony;
+           fillellipse(monx,mony,xrad,yrad);
+           i=t=0;
+           mony=270;
+       }
+
+       //trees
+       setcolor(YELLOW);
+       if(1)
+       {
+           a=(tmaxx1--);
+           b=(tmaxx2--)+dis;
+           c=(tmaxx3--)+(2*dis);
+
+           line(a,290,a,230);
+           line(b,290,b,230);
+           line(c,290,c,230);
+
+           if(tmaxx1==2)
+           {
+           tmaxx1=maxx;
+           score++;
+           }
+           if(tmaxx2+dis==2)
+           {
+            tmaxx2=maxx-dis;
+            score++;
+           }
+           if(tmaxx3+2*dis==2)
+           {
+            tmaxx3=maxx-2*dis;
+            score++;
+           }
+
+       }
+
+       //control
+        if(GetAsyncKeyState(68))                     //68=D
+           monx+=speedm;
+        else if(GetAsyncKeyState(83))                //83=S
+           monx-=speedm;
+        else if(GetAsyncKeyState(65))                //65=A
+           {
+            monx++;
+            mony=265;
+           }
+
+
+       //check
+       for(int pt=230;pt<=290;pt++)
+       {
+           for(y=ceny-yrad;y<=ceny+yrad;y++)
+           {
+               for(x=monx-xrad;x<=monx+xrad;x++)
+               {
+                   if(((y==pt)&&(x==a))||((y==pt)&&(x==b))||((y==pt)&&(x==c)))
+                   {
+
+                       int win2 =initwindow(300,200,"",150,150,false);
+
+                       setcurrentwindow(win2);
+
+                       int ht= textheight("GAMEOVER");
+                       char arr[50];
+
+                       setcolor(RED);
+                       setfillstyle(SOLID_FILL,RED);
+                       bar(0,0,300,200);
+
+                       //setbkcolor(RED);
+
+
+                       setcolor(RED);
+                       settextstyle(BOLD_FONT,HORIZ_DIR,5);
+                       outtextxy(100,100-(ht/2),"GAMEOVER");
+
+                       settextstyle(BOLD_FONT,HORIZ_DIR,3);
+                       sprintf(arr,"YOUR SCORE = %d",score);
+                       outtextxy(60,40,arr);
+
+
+                        delay(100);
+
+                       int win3 =initwindow(500,200,"",550,250,false);
+                       setcurrentwindow(win3);
+                       setcolor(CYAN);
+                       settextstyle(BOLD_FONT,HORIZ_DIR,3);
+                       outtextxy(60,40,"WANT TO PLAY AGAIN????");
+                       outtextxy(100,70,"press (A) for YES");
+                       outtextxy(100,100,"press (D)for NO");
+
+                       if(GetAsyncKeyState(65))                //65=A
+                       {
+                           //CloseWindow(win3);
+                           getch();
+                           closegraph();
+                           delay(50);
+                           goto start;
+                       }
+                       else if(GetAsyncKeyState(68))                     //68=D
+                           exit(0);
+
+                   }//game over
+
+               }
+
+           }
+       }
+
+
+       //display score
+       setcolor(LIGHTCYAN);
+       settextstyle(BOLD_FONT,HORIZ_DIR,3);
+       sprintf(arr,"YOUR SCORE = %d",score);
+       outtextxy(300,40,arr);
+
+
+       page=1-page;
+
+       delay(3);
+
+    }//while
+
+
+    getch();
+    closegraph();
+
+    return 0;
+}
+
+                       
